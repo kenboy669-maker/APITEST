@@ -20,7 +20,7 @@ class UserController extends Controller {
 
         if (!empty($data['name']) && !empty($data['email'])) {
             $userModel = new User();
-            $id = $userModel->create($data['name'], $data['email']);
+            $id = $userModel->create($data['name'], $data['email'], $data['password'] ?? null);
 
             if ($id) {
                 $this->json(["message" => "User created", "id" => $id], 201);

@@ -2,7 +2,10 @@
 require_once 'config.php';
 require_once 'core/Router.php';
 $NEWS_BASE_URL = API_BASE_URL . 'news/';
+$AUTH_BASE_URL = API_BASE_URL . 'auth/';
 $router = new Router();
+$router->add('POST', $AUTH_BASE_URL . 'login', 'AuthController@login');
+$router->add('GET', $AUTH_BASE_URL . 'me', 'AuthController@me');
 $router->add('GET', API_BASE_URL . 'users', 'UserController@getUsers');
 $router->add('POST', API_BASE_URL . 'users', 'UserController@createUser');
 $router->add('PUT', API_BASE_URL . 'users', 'UserController@updateUser');
@@ -20,7 +23,6 @@ $router->add('POST', $NEWS_BASE_URL . 'uploadTest', 'NewsController@uploadTest')
 
 
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-var_dump($path);
 $method = $_SERVER['REQUEST_METHOD'];
 $router->dispatch($path, $method); 
 

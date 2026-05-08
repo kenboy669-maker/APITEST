@@ -17,13 +17,32 @@ class User
         $stmt->execute();
         return $stmt->fetchAll();
     }
-    // 新增使用者 (POST)
-    public function create($name, $email)
+
+    public function findByEmail($email)
     {
-        $sql = "INSERT INTO users (name, email) VALUES (:name, :email)";
+        $sql = "SELECT id, name, email, password_hash FROM users WHERE email = :email LIMIT 1";
         $stmt = $this->db->prepare($sql);
-        $stmt->bindParam(':name', $name);
         $stmt->bindParam(':email', $email);
+        $stmt->execute();
+        return $stmt->fetch();
+    }
+
+    // 新增使用者 (POST)
+    public function create($name, $email, $password = null)
+    {
+        if ($password) {
+            $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+            $sql = "INSERT INTO users (name, email, password_hash) VALUES (:name, :email, :password_hash)";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':name', $name);
+            $stmt->bindParam(':email', $email);
+            $stmt->bindParam(':password_hash', $passwordHash);
+        } else {
+            $sql = "INSERT INTO users (name, email) VALUES (:name, :email)";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':name', $name);
+            $stmt->bindParam(':email', $email);
+        }
 
         if ($stmt->execute()) {
             return $this->db->lastInsertId();
