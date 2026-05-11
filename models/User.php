@@ -27,6 +27,15 @@ class User
         return $stmt->fetch();
     }
 
+    public function findById($id)
+    {
+        $sql = "SELECT id, name, email, password_hash FROM users WHERE id = :id LIMIT 1";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+        return $stmt->fetch();
+    }
+
     // 新增使用者 (POST)
     public function create($name, $email, $password = null)
     {

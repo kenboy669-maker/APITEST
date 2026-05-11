@@ -5,6 +5,7 @@ $NEWS_BASE_URL = API_BASE_URL . 'news/';
 $AUTH_BASE_URL = API_BASE_URL . 'auth/';
 $router = new Router();
 $router->add('POST', $AUTH_BASE_URL . 'login', 'AuthController@login');
+$router->add('POST', $AUTH_BASE_URL . 'google', 'AuthController@googleLogin');
 $router->add('GET', $AUTH_BASE_URL . 'me', 'AuthController@me');
 $router->add('GET', API_BASE_URL . 'users', 'UserController@getUsers');
 $router->add('POST', API_BASE_URL . 'users', 'UserController@createUser');
