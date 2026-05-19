@@ -54,7 +54,8 @@ class User
         }
 
         if ($stmt->execute()) {
-            return $this->db->lastInsertId();
+            //如果執行成功，回傳新使用者的name
+            return $name;
         }
         return false;
     }

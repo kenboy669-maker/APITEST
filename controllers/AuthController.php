@@ -30,7 +30,7 @@ class AuthController extends Controller
     {
         $data = json_decode(file_get_contents("php://input"), true);
         $idToken = $data['id_token'] ?? $data['credential'] ?? null;
-
+        // var_dump($idToken);
         if (empty($idToken)) {
             $this->json(["message" => "Google id_token is required"], 400);
             return;
@@ -40,9 +40,10 @@ class AuthController extends Controller
             $this->json(["message" => "Google Client ID is not configured"], 500);
             return;
         }
-
+        
         $googleUser = $this->verifyGoogleIdToken($idToken);
-
+        
+        
         if (!$googleUser) {
             return;
         }
@@ -103,19 +104,19 @@ class AuthController extends Controller
         ]);
 
         $response = @file_get_contents($url, false, $context);
-
+        // var_dump($response);
         if ($response === false) {
             $this->json(["message" => "Unable to verify Google token"], 502);
             return false;
         }
-
+        //todo 從這邊開始
         $statusCode = 200;
+        // var_dump($response);
         if (isset($http_response_header[0]) && preg_match('/\s(\d{3})\s/', $http_response_header[0], $matches)) {
             $statusCode = (int) $matches[1];
         }
 
         $payload = json_decode($response, true);
-
         if ($statusCode !== 200 || !is_array($payload)) {
             $this->json(["message" => "Invalid Google token"], 401);
             return false;
