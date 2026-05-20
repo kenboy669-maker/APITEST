@@ -1,11 +1,15 @@
 <?php
+session_start();
+
 require_once 'config.php';
 require_once 'core/Controller.php';
 require_once 'core/Jwt.php';
 require_once 'models/User.php';
 
+
 class AuthController extends Controller
 {
+    private $clientId = "501494712724-dquh9309iefpd8f03r0eaakcgpeurq23.apps.googleusercontent.com";
     public function login()
     {
         $data = json_decode(file_get_contents("php://input"), true);
@@ -36,7 +40,7 @@ class AuthController extends Controller
             return;
         }
 
-        if (GOOGLE_CLIENT_ID !== '501494712724-dquh9309iefpd8f03r0eaakcgpeurq23.apps.googleusercontent.com') {
+        if (GOOGLE_CLIENT_ID !== $this->clientId) {
             $this->json(["message" => "Google Client ID is not configured"], 500);
             return;
         }
@@ -62,7 +66,6 @@ class AuthController extends Controller
         //google驗證完畢
         //檢查使用者是否存在資料庫，若不存在則建立新使用者 
 
-
         $userModel = new User();
         $user = $userModel->findByEmail($googleUser['email']);
 
@@ -78,6 +81,9 @@ class AuthController extends Controller
 
             $user = $userModel->findById($newUserId);
         }
+        $_SESSION['user_name'] = $googleUser['name'];
+        $_SESSION['user_email'] = $googleUser['email'];
+        $_SESSION['logged_in'] = true;
         // $this->json(json_encode($googleUser));
         // $this->respondWithToken($user, "Google login successful");
         $this->json(["message" => "{$googleUser['name']} welcome! Google login successful"]);
@@ -104,9 +110,7 @@ class AuthController extends Controller
                 'ignore_errors' => true,
             ],
         ]);
-
         $response = @file_get_contents($url, false, $context);
-        // var_dump($response);
         if ($response === false) {
             $this->json(["message" => "Unable to verify Google token"], 502);
             return false;
@@ -125,7 +129,6 @@ class AuthController extends Controller
 
         return $payload;
     }
-
     private function respondWithToken($user, $message)
     {
         $issuedAt = time();
@@ -140,7 +143,6 @@ class AuthController extends Controller
                 'email' => $user['email'],
             ],
         ];
-
         $this->json([
             "message" => $message,
             "token_type" => "Bearer",
