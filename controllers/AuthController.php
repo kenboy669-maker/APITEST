@@ -36,39 +36,40 @@ class AuthController extends Controller
             return;
         }
 
-        if (GOOGLE_CLIENT_ID === 'your-google-client-id.apps.googleusercontent.com') {
+        if (GOOGLE_CLIENT_ID !== '501494712724-dquh9309iefpd8f03r0eaakcgpeurq23.apps.googleusercontent.com') {
             $this->json(["message" => "Google Client ID is not configured"], 500);
             return;
         }
-        
+        //驗證Google id_token
         $googleUser = $this->verifyGoogleIdToken($idToken);
-        
-        
+
+
         if (!$googleUser) {
             return;
         }
-
         if (($googleUser['aud'] ?? null) !== GOOGLE_CLIENT_ID) {
             $this->json(["message" => "Invalid Google token audience"], 401);
             return;
         }
-
         if (($googleUser['email_verified'] ?? 'false') !== 'true' && ($googleUser['email_verified'] ?? false) !== true) {
             $this->json(["message" => "Google email is not verified"], 401);
             return;
         }
-
         if (empty($googleUser['email'])) {
             $this->json(["message" => "Google account email is required"], 401);
             return;
         }
+        //google驗證完畢
+        //檢查使用者是否存在資料庫，若不存在則建立新使用者 
+
 
         $userModel = new User();
         $user = $userModel->findByEmail($googleUser['email']);
 
         if (!$user) {
             $name = $googleUser['name'] ?? $googleUser['email'];
-            $newUserId = $userModel->create($name, $googleUser['email']);
+            // var_dump($googleUser);
+            $newUserId = $userModel->create($name, $googleUser['email'], $googleUser['sub']);
 
             if (!$newUserId) {
                 $this->json(["message" => "User creation failed"], 500);
@@ -77,8 +78,9 @@ class AuthController extends Controller
 
             $user = $userModel->findById($newUserId);
         }
-
-        $this->respondWithToken($user, "Google login successful");
+        // $this->json(json_encode($googleUser));
+        // $this->respondWithToken($user, "Google login successful");
+        $this->json(["message" => "{$googleUser['name']} welcome! Google login successful"]);
     }
 
     public function me()
@@ -91,7 +93,7 @@ class AuthController extends Controller
 
         $this->json($payload['user']);
     }
-
+    // 驗證Google id_token
     private function verifyGoogleIdToken($idToken)
     {
         $url = 'https://oauth2.googleapis.com/tokeninfo?id_token=' . urlencode($idToken);
@@ -109,7 +111,6 @@ class AuthController extends Controller
             $this->json(["message" => "Unable to verify Google token"], 502);
             return false;
         }
-        //todo 從這邊開始
         $statusCode = 200;
         // var_dump($response);
         if (isset($http_response_header[0]) && preg_match('/\s(\d{3})\s/', $http_response_header[0], $matches)) {

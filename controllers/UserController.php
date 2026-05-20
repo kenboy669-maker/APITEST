@@ -1,26 +1,30 @@
-<?php 
-require_once 'core/Controller.php'; 
+<?php
+require_once 'core/Controller.php';
 require_once 'models/User.php';
-class UserController extends Controller { 
-    public function getUsersTest() { 
-        $users = [["id" => 1, "name" => "John Doe"]]; 
-        $this->json($users); 
-    } 
+class UserController extends Controller
+{
+    public function getUsersTest()
+    {
+        $users = [["id" => 1, "name" => "John Doe"]];
+        $this->json($users);
+    }
     // GET /users
-    public function getUsers() {
+    public function getUsers()
+    {
         $userModel = new User();
         $data = $userModel->getAll();
-        
+
         $this->json($data);
     }
     // POST /users
-    public function createUser() {
+    public function createUser()
+    {
         // 取得 POST 傳來的 JSON 資料
         $data = json_decode(file_get_contents("php://input"), true);
 
         if (!empty($data['name']) && !empty($data['email'])) {
             $userModel = new User();
-            $id = $userModel->create($data['name'], $data['email'], $data['password'] ?? null);
+            $id = $userModel->create($data['name'], $data['email'], $data['google_id'] ?? null, $data['password'] ?? null);
 
             if ($id) {
                 $this->json(["message" => "User created", "id" => $id], 201);
@@ -32,9 +36,10 @@ class UserController extends Controller {
         }
     }
     // PUT /users
-    public function updateUser() {
+    public function updateUser()
+    {
         $data = json_decode(file_get_contents("php://input"), true);
-        
+
         if (!empty($data['id']) && !empty($data['name'])) {
             $userModel = new User();
             if ($userModel->update($data['id'], $data['name'], $data['email'])) {
@@ -48,7 +53,8 @@ class UserController extends Controller {
     }
 
     // DELETE /users
-    public function deleteUser() {
+    public function deleteUser()
+    {
         $data = json_decode(file_get_contents("php://input"), true);
 
         if (!empty($data['id'])) {
@@ -62,6 +68,4 @@ class UserController extends Controller {
             $this->json(["message" => "ID is required"], 400);
         }
     }
-
-} 
-
+}

@@ -20,7 +20,7 @@ class User
 
     public function findByEmail($email)
     {
-        $sql = "SELECT id, name, email, password_hash FROM users WHERE email = :email LIMIT 1";
+        $sql = "SELECT id, name, email  FROM users WHERE email = :email LIMIT 1";
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':email', $email);
         $stmt->execute();
@@ -37,21 +37,24 @@ class User
     }
 
     // 新增使用者 (POST)
-    public function create($name, $email, $password = null)
+    public function create($name, $email, $googleId, $password = null)
     {
         if ($password) {
             $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-            $sql = "INSERT INTO users (name, email, password_hash) VALUES (:name, :email, :password_hash)";
+            $sql = "INSERT INTO users (name, email, google_id, password_hash) VALUES (:name, :email, :google_id, :password_hash)";
             $stmt = $this->db->prepare($sql);
             $stmt->bindParam(':name', $name);
             $stmt->bindParam(':email', $email);
+            $stmt->bindParam(':google_id', $googleId);
             $stmt->bindParam(':password_hash', $passwordHash);
         } else {
-            $sql = "INSERT INTO users (name, email) VALUES (:name, :email)";
+            $sql = "INSERT INTO users (name, email, google_id) VALUES (:name, :email, :google_id)";
             $stmt = $this->db->prepare($sql);
             $stmt->bindParam(':name', $name);
             $stmt->bindParam(':email', $email);
+            $stmt->bindParam(':google_id', $googleId);
         }
+
 
         if ($stmt->execute()) {
             //如果執行成功，回傳新使用者的name
