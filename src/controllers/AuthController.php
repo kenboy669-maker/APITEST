@@ -1,11 +1,14 @@
 <?php
+namespace Api\Controllers;
+
 session_start();
 
-require_once 'config.php';
-require_once 'core/Controller.php';
-require_once 'core/Jwt.php';
-require_once 'models/User.php';
-
+// require_once 'core/Controller.php';
+// require_once 'core/Jwt.php';
+// require_once 'models/User.php';
+use Api\Core\Controller;
+use Api\Core\Jwt;
+use Api\Models\User;   
 
 class AuthController extends Controller
 {

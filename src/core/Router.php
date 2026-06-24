@@ -1,4 +1,7 @@
 <?php
+
+namespace Api\Core;
+// use Api\controllers\NewsController;
 class Router
 {
     private $routes = [];
@@ -48,13 +51,17 @@ class Router
              * ^ 表示字符串的开始，$ 表示字符串的结束，([^/]+) 是一个捕获组，匹配一个或多个非斜杠字符，这样就可以捕获路径中的动态部分（如 {id}）。 
              *  由於比對字串中有包含斜杠所以使用 '#xxxx#'作為開頭與結尾 與'/xxxx/' 意思相同
              */
-            
+
             /** preg_match(模式,字串,匹配) 正則表達搜尋function， 如果提供了参數matches，將填充为搜索结果。 $matches[0]將包含完整模式抓到的文本， $matches[1] 第一個抓到的，以此類推。 */
             if (preg_match($pattern, $path, $matches)) {
                 /**array_shift() 删除array中的第一個元素，並直接存回被刪除的元素。(不用設變數去接) */
                 array_shift($matches);
                 list($controllerName, $action) = explode('@', $route['handler']);
-                require_once "controllers/{$controllerName}.php";
+                // require_once "Api/controllers/{$controllerName}.php";
+                
+                $controllerName = "Api\\controllers\\{$controllerName}";
+                
+
                 $controller = new $controllerName();
                 call_user_func_array([$controller, $action], $matches);
                 return;

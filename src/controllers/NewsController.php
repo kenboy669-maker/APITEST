@@ -1,6 +1,10 @@
 <?php
-require_once 'core/Controller.php';
-require_once 'models/News.php';
+namespace Api\Controllers;
+// require_once 'core/Controller.php';
+// require_once 'models/News.php';
+use Api\Core\Controller;
+use Api\Models\News;   
+
 class NewsController extends Controller
 {
     // GET /news
@@ -102,7 +106,7 @@ class NewsController extends Controller
             return;
         }
 
-        $finfo = new finfo(FILEINFO_MIME_TYPE);
+        $finfo = new \finfo(FILEINFO_MIME_TYPE);
         $mimeType = $finfo->file($file['tmp_name']);
 
         $allowedTypes = [

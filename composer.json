@@ -1,0 +1,15 @@
+{
+    "name": "rrrd/api",
+    "autoload": {
+        "psr-4": {
+            "Api\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "ken",
+            "email": "kenboy669@gmail.com"
+        }
+    ],
+    "require": {}
+}

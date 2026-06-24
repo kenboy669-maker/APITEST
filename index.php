@@ -1,6 +1,9 @@
 <?php
+require_once 'vendor/autoload.php';
 require_once 'config.php';
-require_once 'core/Router.php';
+// require_once 'src/core/Router.php';
+use Api\core\Router;
+
 $USERS_BASE_URL = API_BASE_URL . 'users';
 $NEWS_BASE_URL = API_BASE_URL . 'news';
 $AUTH_BASE_URL = API_BASE_URL . 'auth';

@@ -1,5 +1,5 @@
 <?php
-
+namespace Api\Core;
 class Jwt
 {
     public static function encode(array $payload, string $secret): string
@@ -25,7 +25,7 @@ class Jwt
         $parts = explode('.', $jwt);
 
         if (count($parts) !== 3) {
-            throw new Exception('Invalid token');
+            throw new \Exception('Invalid token');
         }
 
         [$encodedHeader, $encodedPayload, $encodedSignature] = $parts;
@@ -33,7 +33,7 @@ class Jwt
         $payload = json_decode(self::base64UrlDecode($encodedPayload), true);
 
         if (!is_array($header) || !is_array($payload) || ($header['alg'] ?? null) !== 'HS256') {
-            throw new Exception('Invalid token');
+            throw new \Exception('Invalid token');
         }
 
         $expectedSignature = self::base64UrlEncode(
@@ -41,11 +41,11 @@ class Jwt
         );
 
         if (!hash_equals($expectedSignature, $encodedSignature)) {
-            throw new Exception('Invalid token signature');
+            throw new \Exception('Invalid token signature');
         }
 
         if (isset($payload['exp']) && time() >= $payload['exp']) {
-            throw new Exception('Token expired');
+            throw new \Exception('Token expired');
         }
 
         return $payload;

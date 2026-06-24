@@ -1,5 +1,5 @@
 <?php
-
+namespace Api\Core;
 class Database {
     private static $instance = null;
     private $conn;
@@ -13,17 +13,17 @@ class Database {
     // 私有建構子，防止外部直接 new
     private function __construct() {
         try {
-            $this->conn = new PDO(
+            $this->conn = new \PDO(
                 "mysql:host=" . $this->host . ";dbname=" . $this->db_name . ";charset=utf8mb4",
                 $this->username,
                 $this->password,
                 [
-                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                    PDO::ATTR_EMULATE_PREPARES => false,
+                    \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+                    \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
+                    \PDO::ATTR_EMULATE_PREPARES => false,
                 ]
             );
-        } catch (PDOException $exception) {
+        } catch (\PDOException $exception) {
             // 實際環境應寫入 Log，此處僅簡單回報錯誤
             die("Connection error: " . $exception->getMessage());
         }

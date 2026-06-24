@@ -1,5 +1,7 @@
 <?php
-require_once 'core/Database.php';
+namespace Api\Models;
+// require_once 'core/Database.php';
+use Api\Core\Database;
 
 class User
 {
