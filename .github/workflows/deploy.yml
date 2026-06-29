@@ -20,9 +20,14 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
 
+      - name: delete SCP目標資料內容
+        run: |
+          rm -rf ~/php-app/*
+
       - name: Upload by SCP
         run: |
           scp -i ~/.ssh/id_rsa -r . ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/php-app/
+
 
       - name: Restart service
         run: |
