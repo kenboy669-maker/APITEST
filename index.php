@@ -7,8 +7,10 @@ use Api\core\Router;
 $USERS_BASE_URL = API_BASE_URL . 'users';
 $NEWS_BASE_URL = API_BASE_URL . 'news';
 $AUTH_BASE_URL = API_BASE_URL . 'auth';
+$TEST_BASE_URL = API_BASE_URL . 'test';
 $router = new Router();
 
+$router->add('GET', $TEST_BASE_URL, 'TestController@getTest');
 // User routes
 $router->add('GET', $USERS_BASE_URL, '/UserController@getUsers');
 $router->add('POST', $USERS_BASE_URL, '/UserController@createUser');
