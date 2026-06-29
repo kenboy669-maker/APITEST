@@ -13,6 +13,6 @@ class TestController extends Controller
         $testModel = new Test();
         $data = $testModel->getDefaults();
         $this->json($data);
+
     }
 }
-    
