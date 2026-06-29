@@ -23,7 +23,7 @@ jobs:
       - name: Deploy to Debian VM
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
-            cd /home/your-user/php-app &&
+            cd /home/kenboy669/php-app &&
             git pull origin main &&
             docker compose up -d --build
           '
