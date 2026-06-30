@@ -46,6 +46,7 @@ jobs:
             vendor \
             src \
             Dockerfile \
+            config.php \
             docker-compose.yml \
             ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/php-app/
 
