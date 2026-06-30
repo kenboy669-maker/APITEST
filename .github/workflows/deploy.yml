@@ -22,6 +22,10 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --no-dev --prefer-dist --no-interaction --no-progress --optimize-autoloader
 
+      - name: 2. 注入生產環境 config.php 檔案
+        run: |
+          echo "${{ secrets.PHP_CONFIG }}" > config.php
+      
       - name: Prepare SSH
         run: |
           mkdir -p ~/.ssh
@@ -43,6 +47,8 @@ jobs:
             Dockerfile \
             docker-compose.yml \
             ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/php-app/
+
+            
 
       - name: Deploy on VM
         run: |
