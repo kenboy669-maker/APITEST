@@ -1,4 +1,4 @@
-name: Deploy via SCP
+name: Deploy PHP App
 
 on:
   push:
@@ -10,30 +10,45 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout source
         uses: actions/checkout@v4
-        
-      - name: Prepare SSH key
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          tools: composer
+
+      - name: Install Composer dependencies
+        run: composer install --no-dev --prefer-dist --no-interaction --no-progress --optimize-autoloader
+
+      - name: Prepare SSH
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
 
-      - name: delete SCP目標資料內容
+      - name: Ensure deploy directory exists
         run: |
-          rm -rf ~/php-app/*
+          ssh -i ~/.ssh/id_rsa ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "mkdir -p ~/php-app"
 
-      - name: Upload by SCP
+      - name: Upload project with vendor
         run: |
-          scp -i ~/.ssh/id_rsa -r  composer.json composer.lock src Dockerfile docker-compose.yml index.php upload ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/php-app/
+          scp -i ~/.ssh/id_rsa -r \
+            composer.json \
+            composer.lock \
+            vendor \
+            src \
+            public \
+            Dockerfile \
+            docker-compose.yml \
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/php-app/
 
-      - name: Restart service
+      - name: Deploy on VM
         run: |
           ssh -i ~/.ssh/id_rsa ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
             cd ~/php-app &&
-            docker build -t my-php-app . &&
-            docker stop php-container || true &&
-            docker rm php-container || true &&
-            docker run -d --name php-container -p 80:80 my-php-app
+            docker compose down &&
+            docker compose up -d --build
           '
