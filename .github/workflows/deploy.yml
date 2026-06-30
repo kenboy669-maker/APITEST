@@ -48,6 +48,8 @@ jobs:
         run: |
           ssh -i ~/.ssh/id_rsa ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
             cd ~/php-app &&
-            docker compose down &&
-            docker compose up -d --build
+            docker build -t my-php-app . &&
+            docker stop php-container || true &&
+            docker rm php-container || true &&
+            docker run -d --name php-container -p 80:80 my-php-app
           '
