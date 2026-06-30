@@ -26,7 +26,7 @@ jobs:
 
       - name: Upload by SCP
         run: |
-          scp -i ~/.ssh/id_rsa -r . ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/php-app/
+          scp -i ~/.ssh/id_rsa -r  composer.json composer.lock src public Dockerfile docker-compose.yml index.php upload ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/php-app/
 
       - name: Restart service
         run: |
