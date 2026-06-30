@@ -47,6 +47,7 @@ jobs:
             src \
             Dockerfile \
             config.php \
+            .htaccess \
             docker-compose.yml \
             ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/php-app/
 
