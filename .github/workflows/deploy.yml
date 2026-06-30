@@ -40,7 +40,6 @@ jobs:
             composer.lock \
             vendor \
             src \
-            public \
             Dockerfile \
             docker-compose.yml \
             ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/php-app/
