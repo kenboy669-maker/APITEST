@@ -50,6 +50,7 @@ jobs:
             .htaccess \
             docker-compose.yml \
             ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/php-app/
+            
 
             
 
