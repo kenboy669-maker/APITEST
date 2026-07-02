@@ -1,11 +1,10 @@
 <?php
 namespace Api\Models;
-use Api\Core\Database;
+
 class Test {
 
     public function __construct() {
-        // 透過 Singleton 取得 PDO 連線
-        // $this->db = Database::getInstance();
+        // 這裡可以初始化一些屬性或設定
     }
 
     public function getDefaults() {
