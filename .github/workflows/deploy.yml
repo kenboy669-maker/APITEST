@@ -36,7 +36,7 @@ jobs:
 
       - name: Ensure deploy directory exists
         run: |
-          ssh -i ~/.ssh/id_rsa ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "mkdir -p ~/php-app"
+          ssh -i ~/.ssh/id_rsa ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "mkdir -p ~/php-app2"
       
       - name: List files to upload
         run: |
@@ -48,7 +48,7 @@ jobs:
           scp -i ~/.ssh/id_rsa -r \
             Dockerfile \
             docker-compose.yml \
-            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/php-app/
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/php-app2/
             
       
       # - name: Upload project with vendor
