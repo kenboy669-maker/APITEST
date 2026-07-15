@@ -54,7 +54,7 @@ jobs:
             config.php \
             .htaccess \
             docker-compose.yml \
-            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/php-app/
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/${{ secrets.SSH_USER }}/php-app/
             
 
             
