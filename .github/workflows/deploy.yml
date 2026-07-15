@@ -16,7 +16,7 @@ jobs:
       - name: 2. 注入生產環境 config.php 檔案
         run: |
           echo "${{ secrets.PHP_CONFIG }}" > config.php
-      
+
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -25,10 +25,15 @@ jobs:
 
       - name: Install Composer dependencies
         run: composer install --no-dev --prefer-dist --no-interaction --no-progress --optimize-autoloader
+      
+      - name: Check HOME
+        run: |
+          echo "HOME is: $HOME"
 
-
+      
       - name: Prepare SSH
         run: |
+          echo "HOME is: $HOME"
           mkdir -p "$HOME/.ssh"
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > "$HOME/.ssh/id_rsa"
           chmod 600 "$HOME/.ssh/id_rsa"
@@ -50,14 +55,12 @@ jobs:
             .htaccess \
             docker-compose.yml \
             ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/php-app/
-            
 
-            
 
       - name: Deploy on VM
         run: |
-          ssh -i "$HOME/.ssh/id_rsa" ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
-            cd $HOME/php-app &&
+          ssh -i ~/.ssh/id_rsa ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
+            cd ~/php-app &&
             docker build -t my-php-app . &&
             docker stop php-container || true &&
             docker rm php-container || true &&
