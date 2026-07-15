@@ -30,17 +30,17 @@ jobs:
       - name: Prepare SSH
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > "~/.ssh/id_rsa"
-          chmod 600 "~/.ssh/id_rsa"
-          ssh-keyscan -H "${{ secrets.SSH_HOST }}" >> "~/.ssh/known_hosts"
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
 
       - name: Ensure deploy directory exists
         run: |
-          ssh -i "~/.ssh/id_rsa" ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "mkdir -p ~/php-app"
+          ssh -i ~/.ssh/id_rsa ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "mkdir -p ~/php-app"
 
       - name: Upload project with vendor
         run: |
-          scp -i "~/.ssh/id_rsa" -r \
+          scp -i ~/.ssh/id_rsa -r \
             composer.json \
             composer.lock \
             vendor \
@@ -56,7 +56,7 @@ jobs:
 
       - name: Deploy on VM
         run: |
-          ssh -i "~/.ssh/id_rsa" ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
+          ssh -i ~/.ssh/id_rsa ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
             cd ~/php-app &&
             docker build -t my-php-app . &&
             docker stop php-container || true &&
