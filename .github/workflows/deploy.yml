@@ -38,6 +38,12 @@ jobs:
         run: |
           ssh -i ~/.ssh/id_rsa ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "mkdir -p ~/php-app"
       
+      - name: Test SSH access
+        run: |
+          ssh -i ~/.ssh/id_rsa \
+            -o StrictHostKeyChecking=no \
+            "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
+            "ls -la /home/${{ secrets.SSH_USER }} && echo 'SSH access success'"
 
       - name: Upload project with vendor
         run: |
