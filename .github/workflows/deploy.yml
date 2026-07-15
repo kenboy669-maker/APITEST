@@ -38,10 +38,6 @@ jobs:
         run: |
           ssh -i ~/.ssh/id_rsa ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "mkdir -p ~/php-app"
       
-      - name: List files to upload
-        run: |
-          ls ~/php-app
-          ls -la vendor
 
       - name: Upload project with vendor
         run: |
