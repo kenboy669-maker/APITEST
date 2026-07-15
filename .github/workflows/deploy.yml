@@ -33,38 +33,30 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
-
-      - name: Ensure deploy directory exists
-        run: |
-          ssh -i ~/.ssh/id_rsa ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "mkdir -p ~/php-app"
       
-      - name: Test SSH access
+      - name: Test SSH access 一定要留下來檢查有沒有過
         run: |
           ssh -i ~/.ssh/id_rsa \
             -o StrictHostKeyChecking=no \
             "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
             "ls -la /home/${{ secrets.SSH_USER }} && echo 'SSH access success'"
+      
+      - name: Ensure deploy directory exists
+        run: |
+          ssh -i ~/.ssh/id_rsa ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "mkdir -p ~/php-app"
 
       - name: Upload project with vendor
         run: |
           scp -i ~/.ssh/id_rsa -r \
+            composer.json \
+            composer.lock \
+            vendor \
+            src \
             Dockerfile \
+            config.php \
+            .htaccess \
             docker-compose.yml \
             ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/php-app/
-            
-      
-      # - name: Upload project with vendor
-      #   run: |
-      #     scp -i ~/.ssh/id_rsa -r \
-      #       composer.json \
-      #       composer.lock \
-      #       vendor \
-      #       src \
-      #       Dockerfile \
-      #       config.php \
-      #       .htaccess \
-      #       docker-compose.yml \
-      #       ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/php-app/
             
       - name: Deploy on VM
         run: |
