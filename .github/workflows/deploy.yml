@@ -46,15 +46,23 @@ jobs:
       - name: Upload project with vendor
         run: |
           scp -i ~/.ssh/id_rsa -r \
-            # composer.json \
-            # composer.lock \
-            # vendor \
-            # src \
             Dockerfile \
-            # config.php \
-            # .htaccess \
             docker-compose.yml \
             ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/php-app/
+            
+      
+      # - name: Upload project with vendor
+      #   run: |
+      #     scp -i ~/.ssh/id_rsa -r \
+      #       composer.json \
+      #       composer.lock \
+      #       vendor \
+      #       src \
+      #       Dockerfile \
+      #       config.php \
+      #       .htaccess \
+      #       docker-compose.yml \
+      #       ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/php-app/
             
       - name: Deploy on VM
         run: |
