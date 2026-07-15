@@ -29,18 +29,18 @@ jobs:
 
       - name: Prepare SSH
         run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
+          mkdir -p "$HOME/.ssh"
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > "$HOME/.ssh/id_rsa"
+          chmod 600 "$HOME/.ssh/id_rsa"
+          ssh-keyscan -H "${{ secrets.SSH_HOST }}" >> "$HOME/.ssh/known_hosts"
 
       - name: Ensure deploy directory exists
         run: |
-          ssh -i ~/.ssh/id_rsa ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "mkdir -p ~/php-app"
+          ssh -i "$HOME/.ssh/id_rsa" ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "mkdir -p $HOME/php-app"
 
       - name: Upload project with vendor
         run: |
-          scp -i ~/.ssh/id_rsa -r \
+          scp -i "$HOME/.ssh/id_rsa" -r \
             composer.json \
             composer.lock \
             vendor \
@@ -56,8 +56,8 @@ jobs:
 
       - name: Deploy on VM
         run: |
-          ssh -i ~/.ssh/id_rsa ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
-            cd ~/php-app &&
+          ssh -i "$HOME/.ssh/id_rsa" ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
+            cd $HOME/php-app &&
             docker build -t my-php-app . &&
             docker stop php-container || true &&
             docker rm php-container || true &&
