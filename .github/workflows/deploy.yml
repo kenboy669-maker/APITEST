@@ -16,7 +16,7 @@ jobs:
       - name: 2. 注入生產環境 config.php 檔案
         run: |
           echo "${{ secrets.PHP_CONFIG }}" > config.php
-      
+
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -26,21 +26,20 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --no-dev --prefer-dist --no-interaction --no-progress --optimize-autoloader
 
-
       - name: Prepare SSH
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
-      
+
       - name: Test SSH access 一定要留下來檢查有沒有過
         run: |
           ssh -i ~/.ssh/id_rsa \
             -o StrictHostKeyChecking=no \
             "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
             "ls -la /home/${{ secrets.SSH_USER }} && echo 'SSH access success'"
-      
+
       - name: Ensure deploy directory exists
         run: |
           ssh -i ~/.ssh/id_rsa ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "mkdir -p ~/php-app"
@@ -57,7 +56,7 @@ jobs:
             .htaccess \
             docker-compose.yml \
             ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/php-app/
-            
+
       - name: Deploy on VM
         run: |
           ssh -i ~/.ssh/id_rsa ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
@@ -65,5 +64,12 @@ jobs:
             docker build -t my-php-app . &&
             docker stop php-container || true &&
             docker rm php-container || true &&
-            docker run -d --name php-container -p 80:80 my-php-app
+            docker run -d --name php-api \
+            --network app-network \
+            -e DB_HOST=mysql \
+            -e DB_DATABASE=mydb \
+            -e DB_USER=${{ secrets.DB_USER }} \
+            -e DB_PASS=${{ secrets.DB_PASS }} \
+            -v ./src:/var/www/html \
+            -v ./config.php:/var/www/config.php my-php-app
           '
